@@ -12,11 +12,21 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+      - name: Find project
+        run: |
+          Z=$(find . -iname '*.zip' -not -path './.git/*' | head -1)
+          if [ -n "$Z" ]; then echo "Unzipping $Z"; unzip -o -q "$Z" -d _src; fi
+          S=$(find . -name settings.gradle.kts -not -path './.git/*' | head -1)
+          if [ -z "$S" ]; then
+            echo "PROJECT NOT FOUND. Files in repo:"; find . -not -path './.git/*' | head -100; exit 1
+          fi
+          echo "PROJ=$(dirname "$S")" >> $GITHUB_ENV
       - name: Build debug APK
         run: |
+          cd "$PROJ"
           chmod +x ./gradlew
           ./gradlew assembleDebug --no-daemon --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: CarMirror-apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          path: '**/app/build/outputs/apk/debug/app-debug.apk'
