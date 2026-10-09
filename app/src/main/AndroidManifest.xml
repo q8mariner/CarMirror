@@ -1,36 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Screen capture -->
+    <!-- Screen capture (MediaProjection) as a foreground service -->
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-    <!-- Overlay: keeps the phone display awake while mirroring and allows
-         launching the consent screen from the car (background activity start). -->
-    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-
-    <!-- Android Auto: navigation category grants access to a raw drawing Surface. -->
+    <!-- Android Auto: navigation category gives us a full drawing surface on the car screen -->
     <uses-permission android:name="androidx.car.app.NAVIGATION_TEMPLATES" />
     <uses-permission android:name="androidx.car.app.ACCESS_SURFACE" />
 
     <application
         android:allowBackup="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:roundIcon="@drawable/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.CarMirror">
 
-        <!-- Declares this app to Android Auto -->
         <meta-data
             android:name="com.google.android.gms.car.application"
             android:resource="@xml/automotive_app_desc" />
-        <!-- API level 2 = scroll/fling/scale surface gestures. onClick needs a level-5 host. -->
         <meta-data
             android:name="androidx.car.app.minCarApiLevel"
-            android:value="2" />
+            android:value="1" />
 
         <activity
             android:name=".MainActivity"
@@ -42,17 +35,17 @@
             </intent-filter>
         </activity>
 
-        <!-- Holds the MediaProjection token and the VirtualDisplay -->
+        <!-- Captures the phone screen and renders it straight into the car surface -->
         <service
             android:name=".ScreenCaptureService"
             android:exported="false"
             android:foregroundServiceType="mediaProjection" />
 
-        <!-- Touch injection via dispatchGesture() -->
+        <!-- Injects touches coming from the car screen back into the phone -->
         <service
             android:name=".InputInjectorService"
             android:exported="true"
-            android:label="@string/a11y_label"
+            android:label="@string/app_name"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
             <intent-filter>
                 <action android:name="android.accessibilityservice.AccessibilityService" />
@@ -64,7 +57,7 @@
 
         <!-- Android Auto entry point -->
         <service
-            android:name=".CarMirrorAppService"
+            android:name=".CarMirrorService"
             android:exported="true">
             <intent-filter>
                 <action android:name="androidx.car.app.CarAppService" />

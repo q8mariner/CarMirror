@@ -1,32 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Car Mirror</string>
-    <string name="a11y_label">Car Mirror touch control</string>
-    <string name="a11y_description">Injects taps, swipes and pinches received from the car display into the phone. It does not read screen content.</string>
-
-    <string name="channel_name">Screen mirroring</string>
-    <string name="notif_title">Mirroring to car display</string>
-    <string name="notif_text">Your phone screen is being shown in Android Auto.</string>
-    <string name="stop">Stop</string>
-
-    <string name="step_notifications">1. Notifications</string>
-    <string name="step_overlay">2. Display over other apps</string>
-    <string name="step_accessibility">3. Touch control (Accessibility)</string>
-    <string name="step_mirror">4. Screen capture</string>
-    <string name="grant">Grant</string>
-    <string name="open_settings">Open settings</string>
-    <string name="app_info">App info</string>
-    <string name="start_mirroring">Start mirroring</string>
-    <string name="stop_mirroring">Stop mirroring</string>
-    <string name="restricted_hint">Samsung / Android 13+: if the Accessibility switch is greyed out, open App info → ⋮ (top right) → \"Allow restricted settings\", then try again.</string>
-    <string name="aa_hint">Android Auto: Settings → tap \"Version\" 10× → ⋮ → Developer settings → enable \"Unknown sources\". Then open Car Mirror from the car\'s app launcher.</string>
-    <string name="status_ok">✓ granted</string>
-    <string name="status_missing">✗ missing</string>
-    <string name="status_running">● running</string>
-    <string name="status_stopped">○ stopped</string>
-    <string name="consent_denied">Screen capture was not allowed</string>
-
-    <string name="car_need_consent">Allow screen capture on your phone to start mirroring.</string>
-    <string name="car_open_phone">Open on phone</string>
-    <string name="car_check_phone">Check your phone</string>
+    <string name="app_name">مرآة السيارة</string>
+    <string name="accessibility_desc">تسمح لمرآة السيارة بتنفيذ اللمسات القادمة من شاشة السيارة على جوالك (ضغط، سحب، تكبير). لا تقرأ الخدمة محتوى الشاشة.</string>
+    <string name="channel_name">بث الشاشة للسيارة</string>
+    <string name="notif_title">مرآة السيارة تعمل</string>
+    <string name="notif_text">شاشة جوالك معروضة على شاشة السيارة</string>
+    <string name="stop">إيقاف</string>
 </resources>
