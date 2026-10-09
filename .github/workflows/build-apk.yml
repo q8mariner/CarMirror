@@ -2,31 +2,59 @@ name: Build APK
 on:
   push:
   workflow_dispatch:
+permissions:
+  contents: write
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Replace old project with carmirror-src.txt
+        run: |
+          if [ ! -f carmirror-src.txt ]; then echo "No source bundle - building current project"; exit 0; fi
+          git ls-files | grep -v -e '^\.github/' -e '^carmirror-src\.txt$' | xargs -r git rm -q
+          python3 - <<'EOF'
+          import os
+          path = None
+          buf = []
+          def flush():
+              if path:
+                  os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
+                  with open(path, "w", encoding="utf-8") as f:
+                      f.write("\n".join(buf) + "\n")
+          for line in open("carmirror-src.txt", encoding="utf-8").read().split("\n"):
+              if line.startswith("@@@FILE "):
+                  flush()
+                  path = line[8:].strip()
+                  buf = []
+              else:
+                  buf.append(line)
+          flush()
+          EOF
+          git rm -q carmirror-src.txt
+          git config user.name "github-actions"
+          git config user.email "github-actions@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Replace project with new CarMirror source"
+          git push
+          git ls-files
+
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - uses: android-actions/setup-android@v3
-      - name: Find project
-        run: |
-          Z=$(find . -iname '*.zip' -not -path './.git/*' | head -1)
-          if [ -n "$Z" ]; then echo "Unzipping $Z"; unzip -o -q "$Z" -d _src; fi
-          S=$(find . -name settings.gradle.kts -not -path './.git/*' | head -1)
-          if [ -z "$S" ]; then
-            echo "PROJECT NOT FOUND. Files in repo:"; find . -not -path './.git/*' | head -100; exit 1
-          fi
-          echo "PROJ=$(dirname "$S")" >> $GITHUB_ENV
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
       - name: Build debug APK
         run: |
-          cd "$PROJ"
-          chmod +x ./gradlew
-          ./gradlew assembleDebug --no-daemon --stacktrace
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+          gradle assembleDebug --no-daemon --stacktrace
+
       - uses: actions/upload-artifact@v4
         with:
           name: CarMirror-apk
-          path: '**/app/build/outputs/apk/debug/app-debug.apk'
+          path: app/build/outputs/apk/debug/app-debug.apk
